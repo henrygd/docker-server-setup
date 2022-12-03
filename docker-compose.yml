@@ -1,0 +1,114 @@
+networks:
+  CHANGE_TO_USERNAME:
+    external: true
+  database:
+    external: true
+
+volumes:
+  mariadb:
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    networks:
+      - CHANGE_TO_USERNAME
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 127.0.0.1:6900:9000
+
+  mariadb:
+    image: linuxserver/mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    networks:
+      - CHANGE_TO_USERNAME
+      - database
+    volumes:
+      - mariadb:/config
+    environment:
+      PUID: USER_UID
+      PGID: USER_GID
+      MYSQL_ROOT_PASSWORD: 'MARIA_DB_ROOT_PASSWORD'
+      TZ: USER_TIMEZONE
+      # nginx proxy database
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'NPM_DB_PASSWORD'
+      MYSQL_DATABASE: npm
+
+  phpmyadmin:
+    image: linuxserver/phpmyadmin
+    container_name: phpmyadmin
+    networks:
+      - database
+    environment:
+      PUID: USER_UID
+      PGID: USER_GID
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: 'MARIA_DB_ROOT_PASSWORD'
+      TZ: USER_TIMEZONE
+    ports:
+      - 127.0.0.1:6902:80
+    restart: unless-stopped
+
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    networks:
+      - CHANGE_TO_USERNAME
+    ports:
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '127.0.0.1:6901:81' # Admin Web Port
+    environment:
+      DB_MYSQL_HOST: 'mariadb'
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: 'npm'
+      DB_MYSQL_PASSWORD: 'NPM_DB_PASSWORD'
+      DB_MYSQL_NAME: 'npm'
+    volumes:
+      - ./npm/data:/data
+      # - ./npm/nginx:/etc/nginx
+      - ./npm/letsencrypt:/etc/letsencrypt
+
+  filebrowser:
+    image: hurlenko/filebrowser
+    container_name: filebrowser
+    user: 'USER_UID:USER_GID'
+    ports:
+      - 127.0.0.1:6903:8080
+    volumes:
+      - /home/CHANGE_TO_USERNAME:/data
+      - ./filebrowser/config:/config
+    environment:
+      - FB_BASEURL=/
+    restart: unless-stopped
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  fail2ban:
+    container_name: fail2ban
+    hostname: fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - TZ=USER_TIMEZONE
+      - F2B_DB_PURGE_AGE=3d
+    image: crazymax/fail2ban:latest
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./fail2ban/data:/data
+      - ./npm/data/logs:/var/log/npm

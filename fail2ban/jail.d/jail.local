@@ -1,0 +1,31 @@
+[DEFAULT]
+# "bantime.increment" allows to use database for searching of previously banned ip's to increase a
+# default ban time using special formula, default it is banTime * 1, 2, 4, 8, 16, 32...
+bantime.increment = true
+
+# "bantime.rndtime" is the max number of seconds using for mixing with random time
+# to prevent "clever" botnets calculate exact time IP can be unbanned again:
+bantime.rndtime = 2048
+
+# for bantime=600 the multipliers are minutes and equal: 10 min, 30 min, 1 hour, 6 hours, 12 hour, 1 day, 2 day
+bantime.multipliers = 1 3 6 36 72 144 288
+
+# "bantime" is the number of seconds that a host is banned.
+bantime  = 600
+
+# A host is banned if it has generated "maxretry" during the last "findtime" seconds.
+findtime = 60
+
+# "maxretry" is the number of failures before a host get banned.
+maxretry = 8
+
+# use forward chain
+chain = FORWARD
+
+[npm-docker]
+# IPs that trigger too many 403 or 404
+enabled = true
+ignoreip = 127.0.0.1/8 192.168.1.0/24
+action = npm-firewall-block
+filter = npm-docker
+logpath = /var/log/npm/proxy-host-*_access.log
