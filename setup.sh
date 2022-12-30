@@ -119,10 +119,10 @@ chown -R $username: /home/$username/server/filebrowser
 # add user to docker users
 usermod -aG docker $username
 
-# add cron job to restart fail2ban each morning at 3:42
-touch /var/spool/cron/crontabs/$username
-echo "42 3 * * * docker restart fail2ban" >> /var/spool/cron/crontabs/$username
-chown $username:crontab /var/spool/cron/crontabs/$username
+# systemd timer to reload fail2ban jail every six hours
+cp /tmp/docker-server/systemd/* /etc/systemd/system
+systemctl start reloadFail2ban.timer
+systemctl enable reloadFail2ban.timer > /dev/null 2>&1
 
 # update SSH config
 echo -e "\n${CYAN}Updating SSH config...${ENDCOLOR}"

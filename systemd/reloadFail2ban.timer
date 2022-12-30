@@ -1,0 +1,10 @@
+[Unit]
+Description="Reload npm-docker Fail2ban jail timer"
+
+[Timer]
+OnBootSec=6h
+OnUnitActiveSec=6h
+Unit=reloadFail2ban.service
+
+[Install]
+WantedBy=multi-user.target
