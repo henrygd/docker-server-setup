@@ -6,7 +6,7 @@ set -e
 
 SSH_PORT=REPLACE_ME
 
-read -p "$(echo -e "\e[32mWelcome! The last thing we need to do is set up and save firewall rules. Do you want to do this now (y/n)?\e[0m ")" yn
+read -r -p "$(echo -e "\e[32mWelcome! The last thing we need to do is set up and save firewall rules. Do you want to do this now (y/n)?\e[0m ")" yn
 
 if [[ ! $yn =~ ^[Yy]$ ]]
 then
