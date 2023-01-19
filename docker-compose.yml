@@ -72,6 +72,7 @@ services:
       DB_MYSQL_USER: 'npm'
       DB_MYSQL_PASSWORD: 'NPM_DB_PASSWORD'
       DB_MYSQL_NAME: 'npm'
+      TZ: USER_TIMEZONE
     volumes:
       - ./npm/data:/data
       # - ./npm/nginx:/etc/nginx
