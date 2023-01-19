@@ -42,7 +42,7 @@ Besides Nginx Proxy Manager, all services are tunneled through SSH and not publi
 
 These are defined and can be disabled in `~/server/docker-compose.yml`.
 
-### Notes
+## Notes
 
 Debian / Ubuntu derivatives like Raspbian should work but haven't been tested.
 
@@ -60,21 +60,45 @@ docker exec mariadb sh -c 'mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSW
 
 If you want to monitor uptime, check out **[Uptime Kuma](https://github.com/louislam/uptime-kuma)**, but you should run this from a different machine.
 
-The Fail2ban jail is reloaded every six hours with a systemd timer to pick up log files from new proxy hosts. You can manually run the command below if you need it to work with new services immediately.
+### Working with Fail2ban
+
+You can view logs for Fail2ban in Dozzle or by using the `docker logs` command.
+
+The jail is reloaded every six hours with a systemd timer to pick up log files from new proxy hosts.
+
+Additional rules may be added to the container in `~/server/fail2ban`. Use the FORWARD chain (not INPUT or DOCKER-USER) and make sure the filter regex is using the NPM log format - `[Client <HOST>]`.
+
+**View status of jail and currently banned IPs.**
+
+```bash
+docker exec fail2ban sh -c "fail2ban-client status npm-docker"
+```
+
+**Unban an IP in Fail2ban jail.** Replace `0.0.0.0` with the IP you want unbanned.
+
+```bash
+docker exec fail2ban sh -c "fail2ban-client set npm-docker unbanip 0.0.0.0"
+```
+
+**Whitelist an IP to avoid bans.** Edit the jail config using `nano` or `vi` - then find the line starting with `ignoreip`. [Add further IPs separated by spaces](https://fail2ban.org/wiki/index.php/Whitelist). Reload the jail for the changes to take effect immediately.
+
+```bash
+sudo vi ~/server/fail2ban/data/jail.d/jail.local
+```
+
+**Manually reload the jail.** Optional if you want protection for a newly created site right away. Jail automatically reloads every six hours.
 
 ```bash
 docker exec fail2ban sh -c "fail2ban-client reload npm-docker"
 ```
 
-Additional Fail2ban rules may be added to the container in `~/server/fail2ban`. Use the FORWARD chain (not INPUT or DOCKER-USER) and make sure the filter regex is using the NPM log format - `[Client <HOST>]`.
+### Logs
 
-### Manually removing IPs from Fail2ban jail
+Nginx Proxy Manager logs are located in `~/server/npm/data/logs/`. You need the ID of the proxy host you want to view, which you can find by clicking the three dots in NPM. These logs are limited to web requests and are rotated weekly.
 
-Replace `0.0.0.0` with the IP you want unbanned.
+Example command to view live log: `tail -f ~/server/npm/data/logs/proxy-host-1_access.log`
 
-```bash
-docker exec fail2ban sh -c "fail2ban-client set npm-docker unbanip 0.0.0.0"
-```
+Example command search log for IP: `grep "0.0.0.0" ~/server/npm/data/logs/proxy-host-1_access.log`
 
 ### Using with Cloudflare
 
