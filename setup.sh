@@ -13,8 +13,8 @@ YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 REPO="henrygd/docker-server-setup"
 CUR_TIMEZONE=$(timedatectl show | grep zone | sed 's/Timezone=//g');
-MARIA_DB_ROOT_PASSWORD=$(< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c"${1:-20}")
-NPM_DB_PASSWORD=$(< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c"${1:-20}")
+MARIA_DB_ROOT_PASSWORD=$(< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c"${1:-20}" | sed 's/-/_/g')
+NPM_DB_PASSWORD=$(< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c"${1:-20}" | sed 's/-/_/g')
 
 # intro message
 echo -e "${GREEN}Welcome! This script should be run as the root user on a new Debian or Ubuntu server.${ENDCOLOR}\n"
