@@ -52,7 +52,6 @@ while (( ssh_port < 1000 || ssh_port > 65000)); do
   read -r -p "Please use a number between 1000 and 65000: " ssh_port
 done
   
-fi
 # fix permissions
 chown -R "$username": /home/"$username"/.ssh
 
