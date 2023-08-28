@@ -19,7 +19,7 @@ services:
       - ./portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - 6900:9000
+      - 6900:6900
 
   mariadb:
     image: linuxserver/mariadb
