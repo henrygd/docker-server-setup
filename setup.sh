@@ -58,9 +58,7 @@ mkdir -p /home/"$username"/.ssh
 if [ -s /root/.ssh/authorized_keys ]; then
   cp /root/.ssh/authorized_keys /home/"$username"/.ssh/authorized_keys
 else
-  # if no keys, ask for key instead
-  read -r -p "Please paste your public SSH key: " sshkey
-  echo "$sshkey" >> /home/"$username"/.ssh/authorized_keys
+  
 fi
 # fix permissions
 chown -R "$username": /home/"$username"/.ssh
@@ -127,8 +125,8 @@ echo -e "\n${CYAN}Updating SSH config...${ENDCOLOR}"
 {
   echo "Port $ssh_port" 
   echo "PermitRootLogin prohibit-password"
-  echo "PubkeyAuthentication yes"
-  echo "PasswordAuthentication no"
+  echo "PubkeyAuthentication no"
+  echo "PasswordAuthentication yes"
   echo "X11Forwarding no"
 } >> /etc/ssh/sshd_config
 
@@ -153,12 +151,12 @@ done
   echo 'alias dcr="docker compose restart"';
   echo 'alias boost="curl -s https://raw.githubusercontent.com/BOOST-Creative/docker-server-setup/main/boost.sh > ~/.boost.sh && chmod +x ~/.boost.sh && ~/.boost.sh"';
   echo 'alias ctop="docker run --rm -ti --name=ctop --volume /var/run/docker.sock:/var/run/docker.sock:ro quay.io/vektorlab/ctop:latest"';
-  echo 'echo -e "\nPortainer: \e[34mhttp://localhost:6900\n\e[0mNginx Proxy Manager: \e[34mhttp://localhost:6901\n\e[0mphpMyAdmin: \e[34mhttp://localhost:6902\n\e[0mFileBrowser: \e[34mhttp://localhost:6903\e[0m\n\nRun ctop to manage containers and view metrics.\n"' >> /home/$username/.bashrc
+  echo 'echo -e "\nPortainer: \e[34mhttp://0.0.0.0:6900\n\e[0mNginx Proxy Manager: \e[34mhttp://0.0.0.0:6901\n\e[0mphpMyAdmin: \e[34mhttp://0.0.0.0:6902\n\e[0mFileBrowser: \e[34mhttp://0.0.0.0:6903\e[0m\n\nRun ctop to manage containers and view metrics.\n"' >> /home/$username/.bashrc
   echo 'type ~/firewall.sh &>/dev/null && ./firewall.sh';
 } >> /home/"$username"/.bashrc
 
 # Success Message
-echo -e "\n${GREEN}Setup complete 👍. Please log back in as $username on port $ssh_port.${ENDCOLOR}"
+echo -e "\n${GREEN}Setup complete 👍. Please log back in as $username 
 echo -e "${GREEN}Firewall script will run on first login.${ENDCOLOR}"
 echo -e "${GREEN}Update your SSH config file with the info below${ENDCOLOR}\n"
 
@@ -166,10 +164,10 @@ echo "Host $(hostname)"
 echo "    HostName $(curl -s ifconfig.me)"
 echo "    Port $ssh_port"
 echo "    User $username"
-echo "    LocalForward 6900 127.0.0.1:6900"
-echo "    LocalForward 6901 127.0.0.1:6901"
-echo "    LocalForward 6902 127.0.0.1:6902"
-echo "    LocalForward 6903 127.0.0.1:6903"
+echo "    LocalForward 6900 0.0.0.0:6900"
+echo "    LocalForward 6901 0.0.0.0:6901"
+echo "    LocalForward 6902 0.0.0.0:6902"
+echo "    LocalForward 6903 0.0.0.0:6903"
 echo "    ServerAliveInterval 60"
 echo -e "    ServerAliveCountMax 10\n"
 
