@@ -19,7 +19,7 @@ services:
       - ./portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - 0.0.0.0:6900:9000
+      - 6900:9000
 
   mariadb:
     image: linuxserver/mariadb
@@ -53,7 +53,7 @@ services:
       PMA_PASSWORD: 'MARIA_DB_ROOT_PASSWORD'
       TZ: USER_TIMEZONE
     ports:
-      - 0.0.0.0:6902:80
+      - 83:80
     restart: unless-stopped
 
   nginx-proxy-manager:
@@ -65,7 +65,7 @@ services:
     ports:
       - '80:80' # Public HTTP Port
       - '443:443' # Public HTTPS Port
-      - '0.0.0.0:6901:81' # Admin Web Port
+      - '81:81' # Admin Web Port
     environment:
       DB_MYSQL_HOST: 'mariadb'
       DB_MYSQL_PORT: 3306
@@ -83,7 +83,7 @@ services:
     container_name: filebrowser
     user: 'USER_UID:USER_GID'
     ports:
-      - 0.0.0.0:6903:8080
+      - 8080:8080
     volumes:
       - /home/CHANGE_TO_USERNAME:/data
       - ./filebrowser/config:/config
