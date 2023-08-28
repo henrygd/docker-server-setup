@@ -3,7 +3,7 @@
 Run as root on a fresh installation
 
 ```bash
-curl -s https://raw.githubusercontent.com/henrygd/docker-server-setup/main/setup.sh > setup.sh && chmod +x ./setup.sh && ./setup.sh
+curl -s https://raw.githubusercontent.com/jacksonm36/docker-server-setup/main/setup.sh > setup.sh && chmod +x ./setup.sh && ./setup.sh
 ```
 
 ### Hardens and configures system
