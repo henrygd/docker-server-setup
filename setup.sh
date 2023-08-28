@@ -51,13 +51,6 @@ read -r -p "Which port do you want to use for SSH (not 6900-6903 please)? " ssh_
 while (( ssh_port < 1000 || ssh_port > 65000)); do
   read -r -p "Please use a number between 1000 and 65000: " ssh_port
 done
-
-# add ssh key
-mkdir -p /home/"$username"/.ssh
-# check if root has authorized_keys already
-if [ -s /root/.ssh/authorized_keys ]; then
-  cp /root/.ssh/authorized_keys /home/"$username"/.ssh/authorized_keys
-else
   
 fi
 # fix permissions
