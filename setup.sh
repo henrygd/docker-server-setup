@@ -44,7 +44,7 @@ useradd -m -s /bin/bash "$username"
 passwd "$username"
 usermod -aG sudo "$username" || usermod -aG wheel "$username"
 
-echo ""
+echo "moving on"
 
 # SSH port prompt
 read -r -p "Which port do you want to use for SSH (not 6900-6903 please)? " ssh_port
@@ -52,9 +52,6 @@ while (( ssh_port < 1000 || ssh_port > 65000)); do
   read -r -p "Please use a number between 1000 and 65000: " ssh_port
 done
   
-# fix permissions
-chown -R "$username": /home/"$username"/.ssh
-
 # add / update packages
 echo -e "${CYAN}Updating system & packages...${ENDCOLOR}"
 
